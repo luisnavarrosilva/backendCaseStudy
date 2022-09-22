@@ -3,7 +3,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import com.springboot.Exception.NotFoundException;
 import com.springboot.model.Orders;
 import com.springboot.model.Product;
@@ -42,17 +41,8 @@ public class OrderService {
 	public List<Orders> fetchAllOrders(){
 		return ordersRepository.findAll(); 
 	}
-	
-	 //------------fetch all orders based on user id--------------------------------------------
-	public List<Orders> fetchOrdersByUserId(Long uid){
-		UserInfo user=userRepository.getReferenceById(uid);
-		if(user==null)
-			throw new NotFoundException("El usuario con id "+uid+
-					" no se encuentra en la base de datos");
-		return ordersRepository.getByUserId(uid);
-	}
+
     //------------show all the orders based on status------------------------------------
-	@GetMapping("/orders/{status}")
 	public List<Orders> fetchOrdersByStatus(String status){
 		return ordersRepository.getByStatus(status);
 	} 
@@ -81,15 +71,29 @@ public class OrderService {
 		UserInfo user=order.getUser();
 		senderService.sendEmail(user.getEmail(), "Order cancellation", 
 		"You have canceled an order succesfully");
-		return "Cancellation succesfully";
+		return "Cancellation succesfull";
 			
 	}
+	 //------------fetch all orders based on user id--------------------------------------------
+		public List<Orders> fetchOrdersByUserId(Long uid){
+			UserInfo user=userRepository.getReferenceById(uid);
+			if(user==null)
+				throw new NotFoundException("El usuario con id "+uid+
+						" no se encuentra en la base de datos");
+			return ordersRepository.getByUserId(uid);
+		}
 	//-------------Add a product to an order------------------------------------
 	public ProductOrder addProductToOrder(ProductOrder productOrder, Long oid, Long pid) { 
 		//fetch order from db
-		Orders order=ordersRepository.getReferenceById(oid);
+		Orders order=ordersRepository.getOrderById(oid);
 		//fetch product from db
-		Product product=productRepository.getReferenceById(pid);
+		Product product=productRepository.getProductById(pid);
+		if(order==null)
+			throw new NotFoundException("La orden con id "+oid+
+					" no se encuentra en la base de datos");
+		if(product==null)
+			throw new NotFoundException("El producto con id "+pid+ 
+					" no se encuentra en la base de datos");
 		
 		//set order and product to the db
 		productOrder.setOrder(order);

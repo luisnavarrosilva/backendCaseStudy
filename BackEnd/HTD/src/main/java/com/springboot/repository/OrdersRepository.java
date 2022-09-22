@@ -15,6 +15,9 @@ public interface OrdersRepository extends JpaRepository<Orders, Long>{
 	@Query("select o from Orders o Join o.user u where u.id=?1")
 	List<Orders> getByUserId(Long uid);
 
+	@Query("select o from Orders o where o.id=?1")
+	Orders getOrderById(Long oid);
+
 	
 
 }

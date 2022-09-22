@@ -37,5 +37,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>{
 	@Query("select p from Product p where p.id=?1")
 	Product findProductByid(Long id);
 
+	@Query("select p from Product p where p.id=?1")
+	Product getProductById(Long pid);
+
 
 }
